@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var table=require("console.table")
 
 // create the connection information for the sql database
 var connection = mysql.createConnection({
@@ -40,10 +41,13 @@ function start(){
         case "View Products for Sale":
         var query=`select * from products`;
             displayTable(query);
+            break;
         
         case "View low inventory":
         var query=`select * from products where stock_quantity<5`;
         displayTable(query);
+        break;
+
 
 
         case "Add to Inventory":
@@ -99,6 +103,8 @@ function start(){
             );
           });
         })
+        break;
+
 
 
         case "Add New product":
@@ -126,21 +132,26 @@ inquirer.prompt([
                 }
 ])
 .then(function(answer){
+  var sql = `INSERT INTO products SET ?`
+
 connection.query(
-    "INSERT INTO products SET ?",
-    {
+sql, {
 product_name:answer.product_name,
-  department_name:answer.department_name,
-  price:parseFloat(answer.price),
-  stock_quantity:parseInt(answer.quantity)
-    },
+department_name:answer.department_name,
+price:parseFloat(answer.price),
+stock_quantity:parseInt(answer.stock_quantity)
+},
+
     function(err, res) {
+      console.log(err);
         console.log("Product added!!")
         var query=`select * from products`;
         displayTable(query);
     }
   );
 });
+break;
+
 default:
 console.log("Choose an option to continue");
         }
