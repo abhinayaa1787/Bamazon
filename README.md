@@ -55,7 +55,7 @@ Before running the liri.js use terminal to install the above mentioned packages 
 
 ### Supervisor view
 
-#### #### If the user(supervisor) wants to perform his tasks, should run the following command
+####  If the user(supervisor) wants to perform his tasks, should run the following command
 ```` node bamazonSupervisor.js````
 
 ###### When this runs the manager will be prompted to choose from following options 
@@ -67,3 +67,4 @@ Before running the liri.js use terminal to install the above mentioned packages 
 ##### The following will be the output
 ![Screenshot](/images/supervisor_view.png)
 
+#### In all the views, if "Quit" is chosen the database connection ends and the app quits!s

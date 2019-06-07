@@ -1,6 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
- var table=require("console.table")
+//  var table=require("console.table")
 var sql_mode='';
 // create the connection information for the sql database
 var connection = mysql.createConnection({
@@ -54,7 +54,7 @@ console.log("Choose an option to continue");
 }
 function displayTable(){
     connection.query(
-"SELECT d.department_id,d.department_name,d.over_head_costs,COALESCE(SUM(p.product_sales),0) as product_sales,(COALESCE(SUM(p.product_sales),0)- d.over_head_costs) as total_profit from departments d  left join products p on d.department_name=p.department_name GROUP BY p.department_name"
+"SELECT d.department_id,d.department_name,d.over_head_costs,COALESCE(SUM(p.product_sales),0) as product_sales,(COALESCE(SUM(p.product_sales),0)- d.over_head_costs) as total_profit from departments d  left outer join products p on d.department_name=p.department_name GROUP BY p.department_name"
 , function(error,res) {
         if (error) throw error;
 console.table(res);
