@@ -3,11 +3,11 @@
 ## Bamazon isa shopping app that helps customer/manager/supervisor to shop/list/manage products
 
 ### Node packages installed in this 
-* Inquiree
+* Inquirer
 * mySql
 
 
-Before running the liri.js use terminal to install the above mentioned packages using the command ```` npm i ````
+Before running the js file use terminal to install the above mentioned packages using the command ```` npm i ````
 
 ### Customer view!!
 
