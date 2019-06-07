@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: "",
+  password: "Aadhav0422!",
   database: "bamazon"
 });
 connection.connect(function(err) {
@@ -22,7 +22,16 @@ connection.connect(function(err) {
   });
   
 function start(){
-    
+  inquirer.prompt([
+    {
+    name:"confirm",
+    type:"confirm",
+    message:"Do you wish to shop for products?"
+    }
+  ]).then(function(answer){
+    if(answer.confirm)
+
+    {
     connection.query("select * from products",function(err,data){
         if(err )throw err;
         inquirer
@@ -54,18 +63,18 @@ function start(){
     for (var i = 0; i < data.length; i++) {
       if (data[i].product_name === answer.choice) {
         chosenItem = data[i];
-        console.log(chosenItem)
       }
     }
     if (chosenItem.stock_quantity >= parseInt(answer.quantity)) {
         // bid was high enough, so update db, let the user know, and start over
         var updated_quantity= chosenItem.stock_quantity-answer.quantity;
-        console.log (updated_quantity);
+        var sales=(chosenItem.price*answer.quantity)+chosenItem.product_sales
         connection.query(
           "UPDATE products SET ? WHERE ?",
           [
             {
-              stock_quantity: updated_quantity
+              stock_quantity: updated_quantity,
+              product_sales:sales
             },
             {
               item_id: chosenItem.item_id
@@ -75,16 +84,21 @@ function start(){
             if (error) throw error;
             console.log("Order placed successfully!");
             console.log("Total cost for your order is  $"+(answer.quantity*chosenItem.price));
+            start();
           }
         );
       }
       else {
-        console.log("Insufficienty Quantity. Only"+ chosenItem.stock_quantity+" left");
+        console.log("Insufficienty Quantity. Only "+ chosenItem.stock_quantity+" left");
         start();
 
       }
     });
 });
+    }
+    else{
+      connection.end();
+    }
+});
 }
-
 

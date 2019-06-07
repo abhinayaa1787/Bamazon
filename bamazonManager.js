@@ -1,6 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-var table=require("console.table")
+ var table=require("console.table")
 
 // create the connection information for the sql database
 var connection = mysql.createConnection({
@@ -13,7 +13,7 @@ var connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: "",
+  password: "Aadhav0422!",
   database: "bamazon"
 });
 connection.connect(function(err) {
@@ -29,7 +29,7 @@ function start(){
         {
             name:"choice",
             type:"list",
-            choices:["View Products for Sale","View low inventory","Add to Inventory","Add New product"]
+            choices:["View Products for Sale","View low inventory","Add to Inventory","Add New product","Quit"]
         }
     ])
     .then(function(answer){
@@ -40,12 +40,15 @@ function start(){
         
         case "View Products for Sale":
         var query=`select * from products`;
-            displayTable(query);
-            break;
-        
+        var display="These are the products listed for sale";
+            displayTable(query,display);
+
+break;        
+
         case "View low inventory":
         var query=`select * from products where stock_quantity<5`;
-        displayTable(query);
+        var display="These are the products with low inventory";
+        displayTable(query,display);
         break;
 
 
@@ -96,9 +99,13 @@ function start(){
               ]  ,
               function(error) {
                 if (error) throw error;
-                console.log("Product updated successfully!");
                 var query=`select * from products`;
-                 displayTable(query);
+                var display="\n"+answer.quantity+" "+chosenItem.product_name+" added to inventory successfully!"+"\n";
+
+                 displayTable(query,display);
+
+
+
               }
             );
           });
@@ -108,6 +115,7 @@ function start(){
 
 
         case "Add New product":
+        connection.query("select * from departments",function(err,data){
 inquirer.prompt([
     {
     name:"product_name",
@@ -116,8 +124,16 @@ inquirer.prompt([
     },
     {
         name:"department_name",
-        type:"input",
-        message:"Enter the name of the department"
+        type:"rawlist",
+        message:"Enter the name of the department",
+        choices: function() {
+          var choiceArray = [];
+          for (var i = 0; i < data.length; i++) {
+            choiceArray.push(data[i].department_name);
+          }
+          return choiceArray;
+        },
+
         },
         
         {
@@ -132,6 +148,15 @@ inquirer.prompt([
                 }
 ])
 .then(function(answer){
+
+  var chosenItem;
+  for (var i = 0; i < data.length; i++) {
+    if (data[i].department_name === answer.choice) {
+      chosenItem = data[i];
+      // console.log(chosenItem)
+    }
+  }
+
   var sql = `INSERT INTO products SET ?`
 
 connection.query(
@@ -142,31 +167,41 @@ price:parseFloat(answer.price),
 stock_quantity:parseInt(answer.stock_quantity)
 },
 
-    function(err, res) {
-      console.log(err);
-        console.log("Product added!!")
+    function(err) {
         var query=`select * from products`;
-        displayTable(query);
+        var display="New product added"+" " +answer.stock_quantity+" "+answer.product_name+"\n";
+        displayTable(query,display);
+
     }
   );
 });
+        });
+break;
+
+case "Quit":
+connection.end();
 break;
 
 default:
 console.log("Choose an option to continue");
+
         }
     });
 }
    
 
 
-function displayTable(query){
+function displayTable(query,display){
         var sqlquery= connection.query(query,function(err,res) {
             if (err) throw err;
+            console.log("\n");
             console.table(res);
-
+            console.log("\n"+display+"\n");
+            start();
 
     });
+
 }
+
 
 
